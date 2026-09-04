@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Nimbus Admin Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="/dashboard/icon.svg">
+  <link rel="stylesheet" href="/dashboard/app.css">
+  <link rel="stylesheet" href="/dashboard/admin.css">
+  <script src="/dashboard/app.js" defer></script>
+</head>
+<body>
+  <div class="aurora aurora-one"></div>
+  <div class="aurora aurora-two"></div>
+  <main class="shell">
+    <header class="hero">
+      <img class="brand-mark" src="/dashboard/icon.svg" alt="" aria-hidden="true">
+      <div>
+        <p class="eyebrow">PRIVATE FINANCE CLOUD</p>
+        <h1>Nimbus Admin</h1>
+        <p class="subhead">Manage this private finance server, connect phones, and keep shared expenses synchronized.</p>
+      </div>
+      <div class="server-state"><i></i><span id="serverState">Checking server</span></div>
+    </header>
+
+    <div id="notice" class="notice hidden" role="status"></div>
+
+    <section class="grid primary-grid">
+      <article class="card connect-card">
+        <div class="card-heading">
+          <div><p class="step">01 · CONNECT</p><h2>Connect Nimbus</h2></div>
+          <span class="pill">No password in QR</span>
+        </div>
+        <p>Install the APK, then open <strong>Settings → Scan Nimbus QR</strong>. Nimbus opens with the private server address filled in.</p>
+        <label for="serverUrl">Phone server address</label>
+        <div class="input-row">
+          <input id="serverUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://nimbus-finance.example.ts.net">
+          <button id="copyServer" class="icon-button" type="button" aria-label="Copy server address">Copy</button>
+        </div>
+        <div class="qr-wrap">
+          <img id="serverQr" class="qr" alt="QR code that opens Nimbus with this server address">
+          <div>
+            <p class="qr-title">Already have an account?</p>
+            <p class="muted">Use Nimbus's scanner, then sign in with your username and password.</p>
+            <a id="openApp" class="button secondary" href="#">Open Nimbus</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card account-card">
+        <div class="card-heading">
+          <div><p class="step">02 · ACCOUNT</p><h2>Sign up or sign in</h2></div>
+        </div>
+        <div id="signedOut">
+          <div class="tabs" role="tablist">
+            <button class="tab active" type="button" data-panel="signupPanel">Create account</button>
+            <button class="tab" type="button" data-panel="signinPanel">Sign in</button>
+          </div>
+          <form id="signupPanel" class="auth-form panel active">
+            <label>Registration invitation<input name="inviteCode" autocomplete="one-time-code" required></label>
+            <label>Username<input id="signupUsername" name="username" autocomplete="username" pattern="[A-Za-z0-9._-]{3,64}" required><span id="usernameAvailability" class="field-hint">Your unique sign-in ID</span></label>
+            <label>Name<input name="displayName" autocomplete="name" maxlength="80" required><span class="field-hint">The display name friends will see</span></label>
+            <label>Password<input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="128" required></label>
+            <button class="button primary" type="submit">Create private account</button>
+          </form>
+          <form id="signinPanel" class="auth-form panel">
+            <label>Username<input name="username" autocomplete="username" required></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" minlength="12" required></label>
+            <button class="button primary" type="submit">Sign in</button>
+          </form>
+        </div>
+        <div id="signedIn" class="signed-in hidden">
+          <div class="avatar" id="accountAvatar">S</div>
+          <p class="step">SIGNED IN</p>
+          <h3 id="accountName">Nimbus user</h3>
+          <p id="accountUsername" class="muted"></p>
+          <p>Your browser session stays in this tab. Sign in separately in the Android app to synchronize that phone.</p>
+          <button id="browserSignOut" class="button secondary" type="button">Sign out of dashboard</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="card owner-card">
+      <div class="card-heading">
+        <div><p class="step">SERVER OWNER</p><h2>Admin dashboard</h2></div>
+        <span id="ownerBadge" class="pill neutral">Locked</span>
+      </div>
+      <div id="ownerLocked" class="owner-locked">
+        <div>
+          <h3>Owner access is protected</h3>
+          <p>On the server computer, run <code>.\scripts\open-dashboard.ps1</code> for a one-click, 30-minute owner session.</p>
+        </div>
+        <details>
+          <summary>Enter administrator key manually</summary>
+          <form id="ownerLogin" class="input-row owner-login">
+            <input name="adminKey" type="password" autocomplete="off" placeholder="Administrator key" required>
+            <button class="button secondary" type="submit">Unlock</button>
+          </form>
+        </details>
+      </div>
+      <div id="ownerUnlocked" class="hidden">
+        <div class="stats">
+          <div><strong id="statUsers">0</strong><span>Active accounts</span></div>
+          <div><strong id="statDisabled">0</strong><span>Disabled accounts</span></div>
+          <div><strong id="statTrashed">0</strong><span>Trash</span></div>
+          <div><strong id="statSessions">0</strong><span>Active sessions</span></div>
+          <div><strong id="statInvites">0</strong><span>Unused invites</span></div>
+        </div>
+        <div class="owner-grid">
+          <form id="createInvite" class="invite-form">
+            <h3>Create an enrollment QR</h3>
+            <p class="muted">The code contains the server address and a one-use invitation. It never contains a password.</p>
+            <label>Expires after
+              <select name="expiresInHours"><option value="1">1 hour</option><option value="24" selected>24 hours</option><option value="72">3 days</option><option value="168">7 days</option></select>
+            </label>
+            <button class="button primary" type="submit">Create invitation</button>
+          </form>
+          <div id="inviteResult" class="invite-result empty">
+            <p class="muted">A new user's QR code will appear here.</p>
+          </div>
+        </div>
+        <div class="accounts">
+          <div class="accounts-heading"><div><h3>Registered accounts</h3><p class="muted">Disable blocks access. Trash retains the account for 90 days. Permanent delete removes the account and personal data immediately, while anonymizing joint records needed by other group members.</p></div><button id="refreshOwner" class="text-button" type="button">Refresh</button></div>
+          <input id="accountSearch" class="account-search" type="search" placeholder="Search name or username" autocomplete="off">
+          <div id="accountList" class="account-list"><p class="muted">No accounts yet.</p></div>
+        </div>
+
+        <section class="inference-owner" aria-labelledby="inferenceTitle">
+          <div class="accounts-heading">
+            <div>
+              <p class="step">PRIVATE AI</p>
+              <h3 id="inferenceTitle">Models and inference</h3>
+              <p class="muted">Owner-only model lifecycle and runtime controls. Phones receive token and context usage only.</p>
+            </div>
+            <button id="refreshInference" class="text-button" type="button">Refresh</button>
+          </div>
+          <div id="inferenceUnavailable" class="notice error hidden">The inference service is not available. Start the inference profile, then refresh.</div>
+          <div class="inference-grid">
+            <div class="inference-panel">
+              <div class="card-heading compact-heading"><div><h3>Model library</h3><p class="muted">Activate one model for Finance. Loading and downloads continue inside the isolated model service.</p></div></div>
+              <form id="downloadModel" class="download-form">
+                <label>Hugging Face model
+                  <input name="model" autocomplete="off" maxlength="256" value="google/gemma-4-E2B-it-qat-q4_0-gguf:Q4_0" placeholder="owner/repository:quant" required>
+                  <span class="field-hint">Repository or repository plus quantization. No token or URL is sent to phones.</span>
+                </label>
+                <button class="button primary" type="submit">Download model</button>
+              </form>
+              <div id="modelList" class="model-list"><p class="muted">Checking installed models…</p></div>
+            </div>
+
+            <form id="inferenceSettings" class="inference-panel">
+              <div class="card-heading compact-heading"><div><h3>Runtime profile</h3><p class="muted">Saved settings apply when a model is next loaded. Saving safely closes retained server chat sessions.</p></div></div>
+              <div class="control-grid">
+                <label>Context tokens<input name="contextTokens" type="number" min="512" max="16384" step="128" required></label>
+                <label>Maximum output<input name="maxOutputTokens" type="number" min="64" max="1024" step="32" required></label>
+                <label>Reasoning<select name="reasoningEffort"><option value="none">Off — fast structured replies</option><option value="auto">Automatic — model decides</option></select></label>
+                <label>Temperature<input name="temperature" type="number" min="0" max="2" step="0.01" required></label>
+                <label>Top P<input name="topP" type="number" min="0.01" max="1" step="0.01" required></label>
+                <label>Top K<input name="topK" type="number" min="1" max="128" required></label>
+                <label>Seed<input name="seed" type="number" step="1" required></label>
+                <label>Parallel slots<input name="parallelSlots" type="number" min="1" max="8" required></label>
+                <label>Generation threads<input name="threads" type="number" min="1" max="64" required></label>
+                <label>Batch threads<input name="batchThreads" type="number" min="1" max="64" required></label>
+                <label>Batch size<input name="batchSize" type="number" min="128" max="8192" step="64" required></label>
+                <label>Micro batch<input name="microBatchSize" type="number" min="64" max="8192" step="64" required></label>
+                <label>Accelerator layers<input name="gpuLayers" maxlength="4" pattern="all|auto|[0-9]{1,3}" required></label>
+                <label>Split mode<select name="splitMode"><option>none</option><option>layer</option><option>row</option><option>tensor</option></select></label>
+                <label>Tensor split<input name="tensorSplit" maxlength="80" placeholder="Automatic, or 1,1"></label>
+                <label>Main device index<input name="mainGpu" type="number" min="0" max="15" required></label>
+                <label>Free-memory target MiB<input name="fitTargetMiB" type="number" min="128" max="16384" step="128" required></label>
+                <label>Flash Attention<select name="flashAttention"><option>auto</option><option>on</option><option>off</option></select></label>
+                <label>Key cache<select name="cacheTypeK"><option>f16</option><option>q8_0</option><option>q4_0</option><option>q5_0</option><option>f32</option><option>bf16</option></select></label>
+                <label>Value cache<select name="cacheTypeV"><option>f16</option><option>q8_0</option><option>q4_0</option><option>q5_0</option><option>f32</option><option>bf16</option></select></label>
+              </div>
+              <label class="toggle-line"><input name="fitToMemory" type="checkbox"><span><strong>Fit to available memory</strong><small>Let the engine adjust offload and context to preserve the selected free-memory target.</small></span></label>
+              <div class="button-row">
+                <button class="button primary" type="submit">Save and reload</button>
+                <button id="restoreInference" class="button secondary" type="button">Restore defaults</button>
+              </div>
+            </form>
+          </div>
+        </section>
+        <button id="ownerSignOut" class="text-button danger" type="button">Lock owner dashboard</button>
+      </div>
+    </section>
+
+    <footer><span>Nimbus Finance <b id="buildVersion"></b></span><span>Local-first · Private HTTPS · Invitation-only</span></footer>
+  </main>
+</body>
+</html>

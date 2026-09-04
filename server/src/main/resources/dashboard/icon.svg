@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" role="img" aria-labelledby="title description">
+  <title id="title">Nimbus Finance</title>
+  <desc id="description">White finance bars inside a purple disc with a layered violet glow.</desc>
+  <rect width="108" height="108" rx="25" fill="#160B2A"/>
+  <circle cx="54" cy="54" r="40" fill="#5B2F8F"/>
+  <circle cx="54" cy="54" r="36" fill="#7543BF"/>
+  <circle cx="54" cy="54" r="33" fill="#A78BFA"/>
+  <circle cx="54" cy="54" r="31" fill="#7C3AED"/>
+  <circle cx="34" cy="36" r="6" fill="#A78BFA"/>
+  <path fill="#FFFFFF" d="M34 58h9v11h-9zM50 44h9v25h-9zM66 33h9v36h-9z"/>
+</svg>

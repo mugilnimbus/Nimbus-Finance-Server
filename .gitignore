@@ -1,0 +1,62 @@
+# Local IDE, Gradle and generated build output
+/.idea/
+/.gradle/
+/.kotlin/
+**/build/
+*.iml
+
+# Credentials, local tools and runtime state
+# Root-only data/models rules must not hide source packages named data.
+.env
+.env.*
+!.env.example
+.secrets/
+/.tooling/
+/.packages/
+/data/
+/models/
+/docs/
+/private-docs/
+/.agent-private/
+/AGENTS.md
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+
+# Generated build artifacts (users build from source)
+/dist/
+/staging/
+/archive/
+/graphify-out/
+*.apk
+*.aab
+*.aar
+*.apks
+*.jar
+!/gradle/wrapper/gradle-wrapper.jar
+*.litertlm
+*.task
+*.gguf
+*.tflite
+
+# Phone and database backups
+*.nimbusbackup
+*.sjbackup
+*.dump
+*.dump.*
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
+# Local scratch files
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+Desktop.ini
